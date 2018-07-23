@@ -24,6 +24,10 @@ var _mongoose = require('mongoose');
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _user = require('./api/user/user.route');
+
+var _user2 = _interopRequireDefault(_user);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const { DBNAME, DBUSER, DBPASS } = process.env;
@@ -54,9 +58,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res) => {
-  res.success('hello');
-});
+app.use('/api/v1/users', _user2.default);
 
 exports.default = app;
 //# sourceMappingURL=app.js.map
