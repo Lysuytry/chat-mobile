@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.joinChannel = exports.leftChannel = exports.deleteUserById = undefined;
+exports.joinChannel = exports.leftChannel = exports.countUserInChannel = exports.deleteUserById = undefined;
 
 var _mongoose = require('mongoose');
 
@@ -27,18 +27,30 @@ const deleteUserById = exports.deleteUserById = async id => {
   }
 };
 
-const leftChannel = exports.leftChannel = async id => {
+const countUserInChannel = exports.countUserInChannel = async id => {
   try {
-    const result = await User.updateOne({ _id: id }, { $set: { channelId: null } });
+    const count = await User.count({ channelId: id });
+    return count;
+  } catch (error) {
+    return error;
+  }
+};
+
+const leftChannel = exports.leftChannel = async (id, socket) => {
+  try {
+    const result = await User.findById(id);
+    socket.leave(result.channelId);
     return result;
   } catch (error) {
     return error;
   }
 };
 
-const joinChannel = exports.joinChannel = async (id, channelId) => {
+const joinChannel = exports.joinChannel = async (id, socket) => {
   try {
-    const result = await User.updateOne({ _id: id }, { $set: { channelId } });
+    const result = await User.findById(id);
+    if (!result) return new Error('Id is invalid.');
+    socket.join(result.channelId);
     return result;
   } catch (error) {
     return error;

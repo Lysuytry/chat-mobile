@@ -12,7 +12,8 @@ export const getUserList = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
-    const user = await User.create(req.body);
+    const { username } = req.body;
+    const user = await User.findOneAndUpdate({ username }, { $set: req.body }, {new: true, upsert: true});
     res.success(user);
   } catch (error) {
     const message = error.code === 11000 ? 'Username is taken.' : message.message;

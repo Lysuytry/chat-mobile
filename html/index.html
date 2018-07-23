@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Socket.IO chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font: 13px Helvetica, Arial;
+    }
+
+    form {
+      background: #000;
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    form input {
+      border: 0;
+      padding: 10px;
+      width: 90%;
+      margin-right: .5%;
+    }
+
+    form button {
+      width: 9%;
+      background: rgb(130, 224, 255);
+      border: none;
+      padding: 10px;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 5px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+  </style>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- Popper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    $(function () {
+      var old;
+      var socket = io('http://localhost:3000/chatroom');
+      var online = io('http://localhost:3000/online');
+      //first query
+      const token = getParameterByName('token');
+      const url = 'http://localhost:3000/api/v1/rooms';
+      const url1 = 'http://localhost:3000/api/v1/users?att=id';
+      const url2 = 'http://localhost:3000/api/v1/users/myself';
+      //const url
+      //getUser(url2, token);
+      //getListRoom(url, token);
+      //getListRoom(url1, token);
+      //end first query
+
+      $('#headerselect').change(function () {
+        $('#to').val($('#headerselect').val());
+      });
+
+      $('#createRoom').click(function () {
+        //ajax
+      });
+
+      $('#addUserToRoom').click(function () {
+
+      });
+
+      // $('#join').click(function () {
+
+      // });
+
+      $('form').submit(function () {
+        const data = { from: $('#from').val(), to: $('#to').val(), messages: $('#m').val() }
+        socket.emit('newMessage', data);
+        $('#messages').append($('<li style="text-align: right;">').text('\t\t' + $('#m').val()));
+        $('#m').val('');
+        return false;
+      });
+
+      socket.on('addMessage', function (msg) {
+        const { to, from, messages } = msg;
+        if (!old) old = from;
+        if (old !== from) $('#messages').children().remove();
+        if (to.length == 36) $('#to').val(to);
+        else $('#to').val(from);
+        $('#messages').append($('<li>').text('\t\t' + messages));
+      });
+
+      online.on('updateOnline', users => {
+        $('#online').children().remove();
+        users.forEach(item => {
+          $('#online').append($('<li>').text('\t\t' + item.id));
+        });
+      });
+
+      function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+          results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      }
+
+      function getListRoom(url, token) {
+        $.ajax({
+          url: url,
+          headers: { 'Authorization': token },
+          data: {
+            format: 'jsonp'
+          },
+          error: function () {
+            $('#info').html('<p>An error has occurred</p>');
+          },
+          dataType: 'json',
+          success: function (data1) {
+            const { data } = data1;
+            data.forEach(item => {
+              $('#headerselect').append($('<option>', {
+                value: item.id,
+                text: item.id
+              }));
+            });
+            // var $title = $('<h1>').text(data.talks[0].talk_title);
+            // var $description = $('<p>').text(data.talks[0].talk_description);
+            // $('#info')
+            //   .append($title)
+            //   .append($description);
+          },
+          type: 'GET'
+        });
+      }
+
+      function getUser(url, token) {
+        $.ajax({
+          url: url,
+          headers: { 'Authorization': token },
+          data: {
+            format: 'jsonp'
+          },
+          error: function () {
+            $('#info').html('<p>An error has occurred</p>');
+          },
+          dataType: 'json',
+          success: function (data1) {
+            const { username, id } = data1;
+            $('#info').append('ID : \t' + id + '\t').append('\tUsername: \t\t' + username);
+            $('#from').val(id);
+            socket.emit('join', id);
+            online.emit('online', id);
+            //socket.emit('reload', channel);
+            //socket.emit('online', { channel, token });
+            // var $title = $('<h1>').text(data.talks[0].talk_title);
+            // var $description = $('<p>').text(data.talks[0].talk_description);
+            // $('#info')
+            //   .append($title)
+            //   .append($description);
+          },
+          type: 'GET'
+        });
+      }
+
+    });
+  </script>
+</head>
+
+<body>
+  <div class="row" id="header">
+    <div id="token"></div>
+    <div id="msg"></div>
+    <div id="notis"></div>
+    <div id="err"></div>
+    <div class="col-sm-4">
+      <h5 id="info" style="float: left; margin: 10px"></h5>
+    </div>
+    <div class="col-sm-8">
+      <select style="float: right; margin: 10px" id="headerselect"></select>
+    </div>
+  </div>
+  <div class="row" style="margin: 10px 0px">
+    <div class="col-sm-4">
+      <label class="btn btn-primary">from: </label>
+      <input type="text" id="from" />
+    </div>
+    <div class="col-sm-4">
+      <label class="btn btn-primary">to: </label>
+      <input type="text" id="to" />
+    </div>
+    <div class="col-sm-4">
+      <p>Online List : </p>
+      <ul id="online"></ul>
+      <!--<button id="createRoom" type="button" class="btn btn-primary">Create Room</button>
+      <button id="addUserToRoom" type="button" class="btn btn-primary">Add User to a room</button>-->
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-9">
+      <ul id="messages"></ul>
+    </div>
+  </div>
+  <form action="">
+    <input id="m" autocomplete="off" />
+    <button>Send</button>
+  </form>
+</body>
+
+</html>

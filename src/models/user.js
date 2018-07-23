@@ -28,18 +28,22 @@ export const countUserInChannel = async id => {
   }
 };
 
-export const leftChannel = async id => {
+export const leftChannel = async (id, socket) => {
   try {
-    const result = await User.updateOne({ _id: id }, { $set: { channelId: null } });
+    const result = await User.findById(id);
+    if(!result) return new Error('Id is invalid.');
+    socket.leave(result.channelId);
     return result;
   } catch (error) {
     return error;
   }
 };
 
-export const joinChannel = async (id, channelId) => {
+export const joinChannel = async (id, socket) => {
   try {
-    const result = await User.updateOne({ _id: id }, { $set: { channelId } });
+    const result = await User.findById(id);
+    if(!result) return new Error('Id is invalid.');
+    socket.join(result.channelId);
     return result;
   } catch (error) {
     return error;

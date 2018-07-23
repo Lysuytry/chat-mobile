@@ -5,7 +5,8 @@ Joi.objectId = objectid(Joi);
 import {validator} from '../../common/validator';
 
 const userCreatingSchema = Joi.object().keys({
-  username: Joi.string().required()
+  username: Joi.string().required(),
+  channelId: Joi.objectId()
 });
 
 const userUpdatingSchema = Joi.object().keys({
