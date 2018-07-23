@@ -16,7 +16,5 @@ const channelSchema = (0, _mongoose.Schema)({
   limit: { type: Number, required: true, default: 10 }
 }, { timestamps: true });
 
-channelSchema.set('toJSON', { virtuals: false });
-
 exports.default = _mongoose2.default.model('Channel', channelSchema);
 //# sourceMappingURL=channel.js.map

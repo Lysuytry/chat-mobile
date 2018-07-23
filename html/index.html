@@ -73,7 +73,7 @@
       //const token = getParameterByName('token');
       const url = 'http://localhost:3000/api/v1/channels';
       //const urlMessage = `http://localhost:3000/api/v1/messages?limit=5`;
-      // const url1 = 'http://localhost:3000/api/v1/users?att=id';
+       const url1 = 'http://localhost:3000/api/v1/users';
       // const url2 = 'http://localhost:3000/api/v1/users/myself';
       //const url
       //getUser(url2, token);
@@ -86,12 +86,20 @@
         $('#to').val($('#headerselect').val());
       });
 
-      $('#createRoom').click(function () {
-        //ajax
+      $('#joinRoom').click(function () {
+        createUser(url1);
+        //socket.emit('join', $('#from').val());
       });
 
-      $('#addUserToRoom').click(function () {
+      $('#reload').click(function () {
+        const urlMessage = `http://localhost:3000/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
+        getListMessage(urlMessage);
+        skip = +skip + 5;
+      });
 
+      $('#leave').click(function() {
+        socket.emit('left', $('#from').val());
+        $('#from').val('');
       });
 
       // $('#join').click(function () {
@@ -99,10 +107,8 @@
       // });
 
       $('form').submit(function () {
-        const urlMessage = `http://localhost:3000/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
-        getListMessage(urlMessage);
-        skip = +skip + 5;
-        const data = { from: $('#from').val(), to: $('#to').val(), messages: $('#m').val() }
+        //{ userId, content, type }
+        const data = { userId: $('#from').val(), content: $('#m').val() }
         socket.emit('newMessage', data);
         $('#messages').append($('<li style="text-align: right;">').text('\t\t' + $('#m').val()));
         $('#m').val('');
@@ -116,12 +122,12 @@
       });
 
       socket.on('addMessage', function (msg) {
-        const { to, from, messages } = msg;
-        if (!old) old = from;
-        if (old !== from) $('#messages').children().remove();
-        if (to.length == 36) $('#to').val(to);
-        else $('#to').val(from);
-        $('#messages').append($('<li>').text('\t\t' + messages));
+        const { username, content, type, createdAt } = msg;
+        // if (!old) old = from;
+        // if (old !== from) $('#messages').children().remove();
+        // if (to.length == 36) $('#to').val(to);
+        // else $('#to').val(from);
+        $('#messages').append($('<li>').text(createdAt + '\t\t' + username + '\t\t' + content));
       });
 
       // online.on('updateOnline', users => {
@@ -197,23 +203,21 @@
         });
       }
 
-      function getUser(url, token) {
+      function createUser(url) {
         $.ajax({
           url: url,
-          headers: { 'Authorization': token },
           data: {
-            format: 'jsonp'
+            username: $('#from').val(),
+            channelId: $('#to').val()
           },
           error: function () {
             $('#info').html('<p>An error has occurred</p>');
           },
           dataType: 'json',
           success: function (data1) {
-            const { username, id } = data1;
-            $('#info').append('ID : \t' + id + '\t').append('\tUsername: \t\t' + username);
-            $('#from').val(id);
-            socket.emit('join', id);
-            online.emit('online', id);
+            $('#from').val(data1._id);
+            socket.emit('join', $('#from').val());
+            //console.log(data1);
             //socket.emit('reload', channel);
             //socket.emit('online', { channel, token });
             // var $title = $('<h1>').text(data.talks[0].talk_title);
@@ -222,7 +226,7 @@
             //   .append($title)
             //   .append($description);
           },
-          type: 'GET'
+          type: 'POST'
         });
       }
 
@@ -255,8 +259,9 @@
     <div class="col-sm-4">
       <p>Online List : </p>
       <ul id="online"></ul>
-      <!--<button id="createRoom" type="button" class="btn btn-primary">Create Room</button>
-      <button id="addUserToRoom" type="button" class="btn btn-primary">Add User to a room</button>-->
+      <button id="joinRoom" type="button" class="btn btn-primary">Join Room</button>
+      <button id="leave" type="button" class="btn btn-primary"> Leave Room</button>
+      <button id="reload" type="button" class="btn btn-primary"> More Chat</button>
     </div>
   </div>
   <div class="row">

@@ -30,7 +30,7 @@ export const countUserInChannel = async id => {
 
 export const leftChannel = async (id, socket) => {
   try {
-    const result = await User.findById(id);
+    const result = await User.findByIdAndRemove(id);
     if(!result) return new Error('Id is invalid.');
     socket.leave(result.channelId);
     return result;
