@@ -3,6 +3,14 @@ import {filterQuery} from './common/filter-query';
 import logger from 'morgan';
 import body from 'body-parser';
 import 'dotenv/config';
+import mongoose from 'mongoose';
+import userRoute from './api/user/user.route';
+
+const {DBNAME, DBUSER, DBPASS} = process.env;
+
+mongoose.connect(`mongodb://${DBUSER}:${DBPASS}@ds243441.mlab.com:43441/${DBNAME}`, () => {
+  console.log('connected mLab');
+});
 
 const app = express();
 
@@ -30,8 +38,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use( (req, res, next) => {
-  res.success('hello');
-});
+app.use('/api/v1/users', userRoute);
 
 export default app;

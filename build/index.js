@@ -4,6 +4,8 @@ var _app = require('./app');
 
 var _app2 = _interopRequireDefault(_app);
 
+var _socket = require('./socket.io/socket');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const server = require('http').Server(_app2.default);
@@ -23,6 +25,8 @@ _app2.default.use((req, res, next) => {
 _app2.default.use((err, req, res, next) => {
   return res.status(err.status || 500).json(err);
 });
+
+io.of('/chatroom').on('connection', _socket.chatHandler);
 
 server.listen(PORT, () => {
   console.log(`We are open port ${PORT} for our express app`);
