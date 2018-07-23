@@ -70,7 +70,7 @@
       //var online = io('http://localhost:3000/online');
       //first query
       //const token = getParameterByName('token');
-      const url = 'https://fierce-wildwood-40527.herokuapp.com/api/v1/channels';
+      const url = 'http://localhost:3000/api/v1/channels';
       // const url1 = 'http://localhost:3000/api/v1/users?att=id';
       // const url2 = 'http://localhost:3000/api/v1/users/myself';
       //const url
@@ -141,7 +141,7 @@
           dataType: 'json',
           success: function (data1) {
             const { data } = data1;
-            console.log(data1);
+            console.log(data);
             data.forEach(item => {
               $('#headerselect').append($('<option>', {
                 value: item._id,

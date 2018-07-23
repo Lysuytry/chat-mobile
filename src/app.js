@@ -49,10 +49,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', (req, res) => {
+app.use('/test', (req, res) => {
   const file = path.join(__dirname + '../../html/index.html');
   res.sendFile(file);
 });
+
 app.use('/api/v1/users', userRoute);
 // app.use((req, res) => {
 //   res.success('hello');
