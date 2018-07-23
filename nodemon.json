@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "js",
+  "ignore": ["src/**/*.spec.ts"],
+  "exec": "babel src --out-dir build --source-maps && node build/index.js"
+}
