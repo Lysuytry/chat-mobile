@@ -1,16 +1,20 @@
 import express from 'express';
-import {filterQuery} from './common/filter-query';
+import { filterQuery } from './common/filter-query';
 import logger from 'morgan';
 import body from 'body-parser';
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import userRoute from './api/user/user.route';
+import channelRoute from './api/channel/channel.route';
 
-const {DBNAME, DBUSER, DBPASS} = process.env;
+const { DBNAME, DBUSER, DBPASS } = process.env;
 
-mongoose.connect(`mongodb://${DBUSER}:${DBPASS}@ds243441.mlab.com:43441/${DBNAME}`, () => {
-  console.log('connected mLab');
-});
+mongoose.connect(
+  `mongodb://${DBUSER}:${DBPASS}@ds243441.mlab.com:43441/${DBNAME}`,
+  () => {
+    console.log('connected mLab');
+  }
+);
 
 const app = express();
 
@@ -39,5 +43,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/v1/users', userRoute);
+// app.use((req, res) => {
+//   res.success('hello');
+// });
+app.use(`/api/v1/channels`, channelRoute);
 
 export default app;
