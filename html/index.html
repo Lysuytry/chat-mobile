@@ -112,12 +112,12 @@
         $('#messages').append($('<li>').text('\t\t' + messages));
       });
 
-      online.on('updateOnline', users => {
-        $('#online').children().remove();
-        users.forEach(item => {
-          $('#online').append($('<li>').text('\t\t' + item.id));
-        });
-      });
+      // online.on('updateOnline', users => {
+      //   $('#online').children().remove();
+      //   users.forEach(item => {
+      //     $('#online').append($('<li>').text('\t\t' + item.id));
+      //   });
+      // });
 
       function getParameterByName(name, url) {
         if (!url) url = window.location.href;
