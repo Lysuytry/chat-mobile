@@ -14,10 +14,9 @@ var _channel2 = _interopRequireDefault(_channel);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const createChannel = exports.createChannel = async (req, res) => {
-  console.log('hello World ..................');
   try {
-    const { name, limit } = req.body;
-    const channel = new _channel2.default({ name, limit });
+    const { name } = req.body;
+    const channel = new _channel2.default({ name });
     const result = await channel.save();
     res.success(result);
   } catch (error) {
@@ -27,7 +26,7 @@ const createChannel = exports.createChannel = async (req, res) => {
 
 const getChannelList = exports.getChannelList = async (req, res) => {
   try {
-    const { limit, skip = 0, status } = req.query;
+    const { limit, skip, status } = req.query;
 
     const filterByStatus = status ? { status } : { status: 'active' };
     const condition = _extends({}, filterByStatus);

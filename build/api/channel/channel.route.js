@@ -16,8 +16,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const channelRoute = _express2.default.Router();
 
-channelRoute.get('', _channel2.validateGetListChannels, _channel.getChannelList);
-channelRoute.post('', _channel2.validateCreatedChannel, _channel.createChannel);
+channelRoute.get('/', _channel.getChannelList);
+channelRoute.post('/', _channel2.validateCreatedChannel, _channel.createChannel);
 channelRoute.get('/:id', _channel.getChannelById);
 channelRoute.put('/:id', _channel.updateChannelById);
 channelRoute.delete('/:id', _channel.deleteChannelById);

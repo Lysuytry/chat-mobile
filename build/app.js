@@ -28,6 +28,10 @@ var _user = require('./api/user/user.route');
 
 var _user2 = _interopRequireDefault(_user);
 
+var _channel = require('./api/channel/channel.route');
+
+var _channel2 = _interopRequireDefault(_channel);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const { DBNAME, DBUSER, DBPASS } = process.env;
@@ -59,6 +63,10 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/v1/users', _user2.default);
+// app.use((req, res) => {
+//   res.success('hello');
+// });
+app.use(`/api/v1/channels`, _channel2.default);
 
 exports.default = app;
 //# sourceMappingURL=app.js.map
