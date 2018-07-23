@@ -7,7 +7,5 @@ const messageRoute = express.Router();
 messageRoute.get('', getMessageList);
 messageRoute.post('', createMessage);
 messageRoute.get('/:id', getMessageById);
-messageRoute.put('/:id', updateMessageById);
-messageRoute.delete('/:id', deleteMessageById);
 
 export default messageRoute;

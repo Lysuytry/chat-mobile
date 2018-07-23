@@ -13,10 +13,9 @@ export const createMessage = async (req, res) => {
 
 export const getMessageList = async (req, res) => {
   try {
-    const { limit, skip = 0, status } = req.query;
+    const { limit, skip = 0 } = req.query;
 
-    const filterByStatus = status ? { status } : { status: 'active' };
-    const condition = { ...filterByStatus };
+    const condition = {};
 
     const [messages, total] = await Promise.all([
       Message.find(condition)
@@ -33,34 +32,8 @@ export const getMessageList = async (req, res) => {
 export const getMessageById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.query;
-    const message = await Message.findOne({ _id: id, status });
+    const message = await Message.findOne({ _id: id });
     res.success(message);
-  } catch (error) {
-    res.fail(error.message);
-  }
-};
-
-export const updateMessageById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.query;
-    const data = req.body;
-    const conditions = [{ _id: id, status }, { $set: data }];
-    await Message.updateOne(...conditions);
-    res.success('Successfully Updated.');
-  } catch (error) {
-    res.fail(error.message);
-  }
-};
-
-export const deleteMessageById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const conditions = [{ _id: id, status: 'active' }, { $set: { status: 'inactive' } }];
-    const result = await Message.updateOne(...conditions);
-    console.log(result);
-    res.success('Successfully deleted.');
   } catch (error) {
     res.fail(error.message);
   }
