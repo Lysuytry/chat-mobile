@@ -50,6 +50,12 @@ app.use((0, _morgan2.default)('dev'));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({ extended: false }));
 
+app.all('/*', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,accept,access_token,X-Requested-With');
+  next();
+});
+
 app.use((req, res, next) => {
   //bind query
   (0, _filterQuery.filterQuery)(req);

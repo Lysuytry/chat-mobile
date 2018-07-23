@@ -23,6 +23,12 @@ app.use(logger('dev'));
 app.use(body.json());
 app.use(body.urlencoded({ extended: false }));
 
+app.all('/*', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,accept,access_token,X-Requested-With');
+  next();
+});
+
 app.use((req, res, next) => {
   //bind query
   filterQuery(req);
