@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import userRoute from './api/user/user.route';
 import channelRoute from './api/channel/channel.route';
 import messageRoute from './api/message/message.route';
+import path from 'path';
 
 const { DBNAME, DBUSER, DBPASS } = process.env;
 
@@ -22,6 +23,12 @@ const app = express();
 app.use(logger('dev'));
 app.use(body.json());
 app.use(body.urlencoded({ extended: false }));
+
+app.all('/*', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,accept,access_token,X-Requested-With');
+  next();
+});
 
 app.use((req, res, next) => {
   //bind query
@@ -41,6 +48,11 @@ app.use((req, res, next) => {
   };
   //parse to next
   next();
+});
+
+app.use('/test', (req, res) => {
+  const file = path.join(__dirname + '../../html/index.html');
+  res.sendFile(file);
 });
 
 app.use('/api/v1/users', userRoute);

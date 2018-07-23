@@ -27,6 +27,7 @@ _app2.default.use((err, req, res, next) => {
 });
 
 io.of('/chatroom').on('connection', _socket.chatHandler);
+io.of('/online').on('connection', _socket.onlineHandler);
 
 server.listen(PORT, () => {
   console.log(`We are open port ${PORT} for our express app`);

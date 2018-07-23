@@ -28,6 +28,14 @@ var _user = require('./api/user/user.route');
 
 var _user2 = _interopRequireDefault(_user);
 
+var _channel = require('./api/channel/channel.route');
+
+var _channel2 = _interopRequireDefault(_channel);
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const { DBNAME, DBUSER, DBPASS } = process.env;
@@ -41,6 +49,12 @@ const app = (0, _express2.default)();
 app.use((0, _morgan2.default)('dev'));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({ extended: false }));
+
+app.all('/*', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,accept,access_token,X-Requested-With');
+  next();
+});
 
 app.use((req, res, next) => {
   //bind query
@@ -58,7 +72,16 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/test', (req, res) => {
+  const file = _path2.default.join(__dirname + '../../html/index.html');
+  res.sendFile(file);
+});
+
 app.use('/api/v1/users', _user2.default);
+// app.use((req, res) => {
+//   res.success('hello');
+// });
+app.use(`/api/v1/channels`, _channel2.default);
 
 exports.default = app;
 //# sourceMappingURL=app.js.map

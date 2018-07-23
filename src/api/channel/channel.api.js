@@ -13,10 +13,9 @@ export const createChannel = async (req, res) => {
 
 export const getChannelList = async (req, res) => {
   try {
-    const { limit, skip = 0, status } = req.query;
+    const { limit, skip, status } = req.query;
 
-    const filterByStatus = status ? { status } : { status: 'active' };
-    const condition = { ...filterByStatus };
+    const condition = { status };
 
     const [channels, total] = await Promise.all([
       Channel.find(condition)

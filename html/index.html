@@ -66,16 +66,16 @@
   <script>
     $(function () {
       var old;
-      var socket = io('http://localhost:3000/chatroom');
-      var online = io('http://localhost:3000/online');
+      var socket = io('/chatroom');
+      //var online = io('http://localhost:3000/online');
       //first query
-      const token = getParameterByName('token');
-      const url = 'http://localhost:3000/api/v1/rooms';
-      const url1 = 'http://localhost:3000/api/v1/users?att=id';
-      const url2 = 'http://localhost:3000/api/v1/users/myself';
+      //const token = getParameterByName('token');
+      const url = 'http://localhost:3000/api/v1/channels';
+      // const url1 = 'http://localhost:3000/api/v1/users?att=id';
+      // const url2 = 'http://localhost:3000/api/v1/users/myself';
       //const url
       //getUser(url2, token);
-      //getListRoom(url, token);
+      getListRoom(url);
       //getListRoom(url1, token);
       //end first query
 
@@ -112,12 +112,12 @@
         $('#messages').append($('<li>').text('\t\t' + messages));
       });
 
-      online.on('updateOnline', users => {
-        $('#online').children().remove();
-        users.forEach(item => {
-          $('#online').append($('<li>').text('\t\t' + item.id));
-        });
-      });
+      // online.on('updateOnline', users => {
+      //   $('#online').children().remove();
+      //   users.forEach(item => {
+      //     $('#online').append($('<li>').text('\t\t' + item.id));
+      //   });
+      // });
 
       function getParameterByName(name, url) {
         if (!url) url = window.location.href;
@@ -129,10 +129,9 @@
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
 
-      function getListRoom(url, token) {
+      function getListRoom(url) {
         $.ajax({
           url: url,
-          headers: { 'Authorization': token },
           data: {
             format: 'jsonp'
           },
@@ -142,10 +141,11 @@
           dataType: 'json',
           success: function (data1) {
             const { data } = data1;
+            console.log(data);
             data.forEach(item => {
               $('#headerselect').append($('<option>', {
-                value: item.id,
-                text: item.id
+                value: item._id,
+                text: item.name
               }));
             });
             // var $title = $('<h1>').text(data.talks[0].talk_title);
