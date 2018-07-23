@@ -32,6 +32,10 @@ var _channel = require('./api/channel/channel.route');
 
 var _channel2 = _interopRequireDefault(_channel);
 
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const { DBNAME, DBUSER, DBPASS } = process.env;
@@ -62,6 +66,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/', (req, res) => {
+  const file = _path2.default.join(__dirname + '../../html/index.html');
+  res.sendFile(file);
+});
 app.use('/api/v1/users', _user2.default);
 // app.use((req, res) => {
 //   res.success('hello');

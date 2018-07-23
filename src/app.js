@@ -6,6 +6,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import userRoute from './api/user/user.route';
 import channelRoute from './api/channel/channel.route';
+import path from 'path';
 
 const { DBNAME, DBUSER, DBPASS } = process.env;
 
@@ -42,6 +43,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/', (req, res) => {
+  const file = path.join(__dirname + '../../html/index.html');
+  res.sendFile(file);
+});
 app.use('/api/v1/users', userRoute);
 // app.use((req, res) => {
 //   res.success('hello');

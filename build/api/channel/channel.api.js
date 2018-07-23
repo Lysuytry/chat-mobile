@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.deleteChannelById = exports.updateChannelById = exports.getChannelById = exports.getChannelList = exports.createChannel = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _channel = require('../../models/channel');
 
 var _channel2 = _interopRequireDefault(_channel);
@@ -28,8 +26,7 @@ const getChannelList = exports.getChannelList = async (req, res) => {
   try {
     const { limit, skip, status } = req.query;
 
-    const filterByStatus = status ? { status } : { status: 'active' };
-    const condition = _extends({}, filterByStatus);
+    const condition = { status };
 
     const [channels, total] = await Promise.all([_channel2.default.find(condition).skip(skip).limit(limit), _channel2.default.count(condition)]);
     res.success(channels, { limit, skip, total });
