@@ -6,6 +6,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import userRoute from './api/user/user.route';
 import channelRoute from './api/channel/channel.route';
+import messageRoute from './api/message/message.route';
 import path from 'path';
 
 const { DBNAME, DBUSER, DBPASS } = process.env;
@@ -55,9 +56,7 @@ app.use('/test', (req, res) => {
 });
 
 app.use('/api/v1/users', userRoute);
-// app.use((req, res) => {
-//   res.success('hello');
-// });
 app.use(`/api/v1/channels`, channelRoute);
+app.use(`/api/v1/messages`, messageRoute);
 
 export default app;

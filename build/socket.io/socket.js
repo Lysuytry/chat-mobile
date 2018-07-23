@@ -7,6 +7,8 @@ exports.onlineHandler = exports.chatHandler = undefined;
 
 var _user = require('../models/user');
 
+var _message = require('../models/message');
+
 const chatHandler = exports.chatHandler = socket => {
   socket.on('join', userId => {
     (0, _user.joinChannel)(userId, socket);
@@ -19,6 +21,7 @@ const chatHandler = exports.chatHandler = socket => {
   socket.on('newMessage', data => {
     const { from, to, messages } = data;
     socket.broadcast.to(to).emit('addMessage', { to, from, messages });
+    (0, _message.createMessage)(data);
   });
 };
 

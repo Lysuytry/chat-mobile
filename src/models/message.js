@@ -1,18 +1,41 @@
-// import mongoose, { Schema } from 'mongoose';
-// import channel from './channel';
+import mongoose, { Schema } from 'mongoose';
 
-// // const channelSchema = Schema({
-// //   name: {type: String, required: true},
-// //   status: {type: String, default: 'active'},
-// //   limit: {type: Number, required:true, default: 10}
+const messageSchema = Schema(
+  {
+    type: { type: String, default: 'message' },
+    username: { type: String, required: true },
+    content: { type: String },
+    channel: { type: Schema.Types.ObjectId, ref: `Channel`, required: true }
+  },
+  { timestamps: true }
+);
 
+const Message = mongoose.model('Message', messageSchema);
 
-// //   username: {type: String, required: true},
-// //   content
-// //   channel: {type: Schema.Types.ObjectId, ref: `Channel`, required: true},
-// // }, {timestamps: true});
+export const createMessage = async data => {
+  try {
+    const { username, content, channel, type } = data;
+    const message = new Message({ username, content, channel, type });
+    const result = await message.save();
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
 
-// channelSchema.set('toJSON', { virtuals: false});
+export const getMessagesByChannelId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { limit, skip } = req.query;
+    const condition = { channel: id };
+    const [message, count] = await Promise.all([
+      Message.aggregate([{$match: { channel: mongoose.Types.ObjectId(id)}} , { $sort: { createdAt: -1 }}, { $skip: skip }, { $limit: limit }]),
+      Message.count(condition)
+    ]);
+    res.success(message, { count, skip, limit });
+  } catch (error) {
+    res.fail(error);
+  }
+};
 
-// export default mongoose.model('Channel', channelSchema);
-
+export default Message;

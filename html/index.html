@@ -67,15 +67,18 @@
     $(function () {
       var old;
       var socket = io('/chatroom');
+      var skip = 0 , limit = 5;
       //var online = io('http://localhost:3000/online');
       //first query
       //const token = getParameterByName('token');
       const url = 'http://localhost:3000/api/v1/channels';
+      //const urlMessage = `http://localhost:3000/api/v1/messages?limit=5`;
       // const url1 = 'http://localhost:3000/api/v1/users?att=id';
       // const url2 = 'http://localhost:3000/api/v1/users/myself';
       //const url
       //getUser(url2, token);
       getListRoom(url);
+      //getListMessage(urlMessage);
       //getListRoom(url1, token);
       //end first query
 
@@ -96,11 +99,20 @@
       // });
 
       $('form').submit(function () {
+        const urlMessage = `http://localhost:3000/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
+        getListMessage(urlMessage);
+        skip = +skip + 5;
         const data = { from: $('#from').val(), to: $('#to').val(), messages: $('#m').val() }
         socket.emit('newMessage', data);
         $('#messages').append($('<li style="text-align: right;">').text('\t\t' + $('#m').val()));
         $('#m').val('');
         return false;
+      });
+
+      $('#to').hover(function() {
+        const urlMessage = `http://localhost:3000/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
+        getListMessage(urlMessage);
+        skip = +skip + 5;
       });
 
       socket.on('addMessage', function (msg) {
@@ -129,6 +141,32 @@
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
       }
 
+      function getListMessage(url) {
+        $.ajax({
+          url: url,
+          data: {
+            format: 'jsonp'
+          },
+          error: function () {
+            $('#info').html('<p>An error has occurred</p>');
+          },
+          dataType: 'json',
+          success: function (data1) {
+            const { data } = data1;
+            console.log(data);
+            data.forEach(item => {
+              $('#messages').append($('<li>').text('\t\t' + item.content));
+            });
+            // var $title = $('<h1>').text(data.talks[0].talk_title);
+            // var $description = $('<p>').text(data.talks[0].talk_description);
+            // $('#info')
+            //   .append($title)
+            //   .append($description);
+          },
+          type: 'GET'
+        });
+      }
+
       function getListRoom(url) {
         $.ajax({
           url: url,
@@ -147,6 +185,7 @@
                 value: item._id,
                 text: item.name
               }));
+              $('#to').val($('#headerselect').val());
             });
             // var $title = $('<h1>').text(data.talks[0].talk_title);
             // var $description = $('<p>').text(data.talks[0].talk_description);
