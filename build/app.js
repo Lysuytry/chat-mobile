@@ -32,6 +32,10 @@ var _channel = require('./api/channel/channel.route');
 
 var _channel2 = _interopRequireDefault(_channel);
 
+var _message = require('./api/message/message.route');
+
+var _message2 = _interopRequireDefault(_message);
+
 var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
@@ -78,10 +82,8 @@ app.use('/test', (req, res) => {
 });
 
 app.use('/api/v1/users', _user2.default);
-// app.use((req, res) => {
-//   res.success('hello');
-// });
 app.use(`/api/v1/channels`, _channel2.default);
+app.use(`/api/v1/messages`, _message2.default);
 
 exports.default = app;
 //# sourceMappingURL=app.js.map

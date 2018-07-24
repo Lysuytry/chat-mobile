@@ -1,11 +1,11 @@
-import express from 'express';
+import { Router } from 'express';
 import { createMessage, deleteMessageById, getMessageById, getMessageList, updateMessageById } from './message.api';
-import { validateCreatedMessage } from './message.middleware';
+import { validateMessageCreating } from './message.middleware';
 
-const messageRoute = express.Router();
+const messageRoute = Router();
 
-messageRoute.get('', getMessageList);
-messageRoute.post('', createMessage);
+messageRoute.get('/', getMessageList);
+messageRoute.post('/', validateMessageCreating, createMessage);
 messageRoute.get('/:id', getMessageById);
 
 export default messageRoute;

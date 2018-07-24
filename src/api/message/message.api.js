@@ -2,8 +2,8 @@ import Message from '../../models/message';
 
 export const createMessage = async (req, res) => {
   try {
-    const { username, content, channel } = req.body;
-    const message = new Message({ username, content, channel });
+    const { username, content, channel, type } = req.body;
+    const message = new Message({ username, content, channel, type });
     const result = await message.save();
     res.success(result);
   } catch (error) {
@@ -13,14 +13,11 @@ export const createMessage = async (req, res) => {
 
 export const getMessageList = async (req, res) => {
   try {
-    const { limit, skip = 0 } = req.query;
-
+    const { limit, skip } = req.query;
     const condition = {};
 
     const [messages, total] = await Promise.all([
-      Message.find(condition)
-        .skip(skip)
-        .limit(limit),
+      Message.aggregate([{$sort: {createdAt: -1} }, {$skip: skip}, {$limit: limit}]),
       Message.count(condition)
     ]);
     res.success(messages, { limit, skip, total });

@@ -1,14 +1,16 @@
 import Joi from 'joi';
 import objectid from 'joi-objectid';
-import {validator} from '../../common/validator';
+import { validator } from '../../common/validator';
 
 Joi.objectId = objectid(Joi);
 
-const createChannelValidator = Joi.object().keys({
-  name: Joi.string().required(),
-  limit: Joi.number()
+const messageCreatingSchema = Joi.object().keys({
+  username: Joi.string().required(),
+  content: Joi.string(),
+  type: Joi.string(),
+  channel: Joi.objectId().required()
 });
 
-export const validateCreatedChannel = (req, res, next) => {
-  validator(req.body, createChannelValidator, req, res, next);
+export const validateMessageCreating = (req, res, next) => {
+  validator(req.body, messageCreatingSchema, req, res, next);
 };

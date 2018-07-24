@@ -67,15 +67,18 @@
     $(function () {
       var old;
       var socket = io('/chatroom');
+      var skip = 0 , limit = 5;
       //var online = io('http://localhost:3000/online');
       //first query
       //const token = getParameterByName('token');
       const url = 'http://localhost:3000/api/v1/channels';
-      // const url1 = 'http://localhost:3000/api/v1/users?att=id';
+      //const urlMessage = `http://localhost:3000/api/v1/messages?limit=5`;
+       const url1 = 'http://localhost:3000/api/v1/users';
       // const url2 = 'http://localhost:3000/api/v1/users/myself';
       //const url
       //getUser(url2, token);
       getListRoom(url);
+      //getListMessage(urlMessage);
       //getListRoom(url1, token);
       //end first query
 
@@ -83,12 +86,20 @@
         $('#to').val($('#headerselect').val());
       });
 
-      $('#createRoom').click(function () {
-        //ajax
+      $('#joinRoom').click(function () {
+        createUser(url1);
+        //socket.emit('join', $('#from').val());
       });
 
-      $('#addUserToRoom').click(function () {
+      $('#reload').click(function () {
+        const urlMessage = `http://localhost:3000/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
+        getListMessage(urlMessage);
+        skip = +skip + 5;
+      });
 
+      $('#leave').click(function() {
+        socket.emit('left', $('#from').val());
+        $('#from').val('');
       });
 
       // $('#join').click(function () {
@@ -96,20 +107,31 @@
       // });
 
       $('form').submit(function () {
-        const data = { from: $('#from').val(), to: $('#to').val(), messages: $('#m').val() }
+        //{ userId, content, type }
+        const data = { userId: $('#from').val(), content: $('#m').val() }
         socket.emit('newMessage', data);
         $('#messages').append($('<li style="text-align: right;">').text('\t\t' + $('#m').val()));
         $('#m').val('');
         return false;
       });
 
+      $('#to').hover(function() {
+        const urlMessage = `http://localhost:3000/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
+        getListMessage(urlMessage);
+        skip = +skip + 5;
+      });
+
       socket.on('addMessage', function (msg) {
-        const { to, from, messages } = msg;
-        if (!old) old = from;
-        if (old !== from) $('#messages').children().remove();
-        if (to.length == 36) $('#to').val(to);
-        else $('#to').val(from);
-        $('#messages').append($('<li>').text('\t\t' + messages));
+        const { username, content, type, createdAt } = msg;
+        // if (!old) old = from;
+        // if (old !== from) $('#messages').children().remove();
+        // if (to.length == 36) $('#to').val(to);
+        // else $('#to').val(from);
+        $('#messages').append($('<li>').text(createdAt + '\t\t' + username + '\t\t' + content));
+      });
+
+      socket.on('count', function (msg){
+        $('#info').html(msg);
       });
 
       // online.on('updateOnline', users => {
@@ -127,6 +149,32 @@
         if (!results) return null;
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      }
+
+      function getListMessage(url) {
+        $.ajax({
+          url: url,
+          data: {
+            format: 'jsonp'
+          },
+          error: function () {
+            $('#info').html('<p>An error has occurred</p>');
+          },
+          dataType: 'json',
+          success: function (data1) {
+            const { data } = data1;
+            console.log(data);
+            data.forEach(item => {
+              $('#messages').append($('<li>').text('\t\t' + item.content));
+            });
+            // var $title = $('<h1>').text(data.talks[0].talk_title);
+            // var $description = $('<p>').text(data.talks[0].talk_description);
+            // $('#info')
+            //   .append($title)
+            //   .append($description);
+          },
+          type: 'GET'
+        });
       }
 
       function getListRoom(url) {
@@ -147,6 +195,7 @@
                 value: item._id,
                 text: item.name
               }));
+              $('#to').val($('#headerselect').val());
             });
             // var $title = $('<h1>').text(data.talks[0].talk_title);
             // var $description = $('<p>').text(data.talks[0].talk_description);
@@ -158,23 +207,21 @@
         });
       }
 
-      function getUser(url, token) {
+      function createUser(url) {
         $.ajax({
           url: url,
-          headers: { 'Authorization': token },
           data: {
-            format: 'jsonp'
+            username: $('#from').val(),
+            channelId: $('#to').val()
           },
           error: function () {
             $('#info').html('<p>An error has occurred</p>');
           },
           dataType: 'json',
           success: function (data1) {
-            const { username, id } = data1;
-            $('#info').append('ID : \t' + id + '\t').append('\tUsername: \t\t' + username);
-            $('#from').val(id);
-            socket.emit('join', id);
-            online.emit('online', id);
+            $('#from').val(data1._id);
+            socket.emit('join', $('#from').val());
+            //console.log(data1);
             //socket.emit('reload', channel);
             //socket.emit('online', { channel, token });
             // var $title = $('<h1>').text(data.talks[0].talk_title);
@@ -183,7 +230,7 @@
             //   .append($title)
             //   .append($description);
           },
-          type: 'GET'
+          type: 'POST'
         });
       }
 
@@ -216,8 +263,9 @@
     <div class="col-sm-4">
       <p>Online List : </p>
       <ul id="online"></ul>
-      <!--<button id="createRoom" type="button" class="btn btn-primary">Create Room</button>
-      <button id="addUserToRoom" type="button" class="btn btn-primary">Add User to a room</button>-->
+      <button id="joinRoom" type="button" class="btn btn-primary">Join Room</button>
+      <button id="leave" type="button" class="btn btn-primary"> Leave Room</button>
+      <button id="reload" type="button" class="btn btn-primary"> More Chat</button>
     </div>
   </div>
   <div class="row">
