@@ -29,12 +29,8 @@ export const chatHandler = socket => {
     users = users.filter(item => item.id !== socket.id);
   });
 
-  socket.on('error', (error) => {
-    console.log('error',error);
-  });
-
-  socket.on('disconnecting', (reason) => {
-    console.log(reason);
+  socket.on('error', (msg) => {
+    console.log(msg);
     users.forEach(item => {
       if (item.id === socket.id) {
         //console.log(item.id);
