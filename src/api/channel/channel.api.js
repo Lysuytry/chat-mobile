@@ -1,4 +1,5 @@
 import Channel from '../../models/channel';
+import { countUserAllChannel } from '../../models/user';
 
 export const createChannel = async (req, res) => {
   try {
@@ -17,12 +18,20 @@ export const getChannelList = async (req, res) => {
 
     const condition = { status };
 
-    const [channels, total] = await Promise.all([
+    const [channels, total, all] = await Promise.all([
       Channel.find(condition)
         .skip(skip)
         .limit(limit),
-      Channel.count(condition)
+      Channel.count(condition),
+      countUserAllChannel()
     ]);
+    channels.forEach(item => {
+      all.forEach(item1 => {
+        if (item.id == item1._id) {
+          item.count = item1.count;
+        }
+      });
+    });
     res.success(channels, { limit, skip, total });
   } catch (error) {
     res.fail(error.message);

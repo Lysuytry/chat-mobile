@@ -13,7 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const channelSchema = (0, _mongoose.Schema)({
   name: { type: String, required: true },
   status: { type: String, default: 'active' },
-  limit: { type: Number, required: true, default: 10 }
+  count: { type: Number, default: 0 }
 }, { timestamps: true });
 
 exports.default = _mongoose2.default.model('Channel', channelSchema);

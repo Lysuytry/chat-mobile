@@ -18,7 +18,7 @@ export const createMessage = async (data, socket) => {
     const { userId, content, type } = data;
     const user = await User.findById({ _id: userId });
     const { username, channelId } = user;
-    console.log(channelId);
+    //console.log(channelId);
     const message = await Message.create({ username, content, channel: channelId, type });
     socket.broadcast.to(channelId).emit('addMessage', { username, content, type, createdAt: message.createdAt });
     return message;

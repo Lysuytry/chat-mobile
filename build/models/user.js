@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.joinChannel = exports.leftChannel = exports.countUserInChannel = exports.deleteUserById = undefined;
+exports.joinChannel = exports.leftChannel = exports.countUserInChannel = exports.deleteUserById = exports.countUserAllChannel = undefined;
 
 var _mongoose = require('mongoose');
 
@@ -17,6 +17,20 @@ const userSchema = (0, _mongoose.Schema)({
 }, { timestamps: true });
 
 const User = _mongoose2.default.model('User', userSchema);
+
+const countUserAllChannel = exports.countUserAllChannel = async () => {
+  try {
+    const result = await User.aggregate([{
+      $group: {
+        _id: "$channelId",
+        count: { $sum: 1 }
+      }
+    }]);
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
 
 const deleteUserById = exports.deleteUserById = async id => {
   try {
@@ -41,6 +55,8 @@ const leftChannel = exports.leftChannel = async (id, socket) => {
     const result = await User.findByIdAndRemove(id);
     if (!result) return new Error('Id is invalid.');
     socket.leave(result.channelId);
+    const count = await countUserInChannel(result.channelId);
+    socket.to(result.channelId).emit('count', count);
     return result;
   } catch (error) {
     return error;
@@ -49,10 +65,13 @@ const leftChannel = exports.leftChannel = async (id, socket) => {
 
 const joinChannel = exports.joinChannel = async (id, socket) => {
   try {
-    const result = await User.findById(id);
-    if (!result) return new Error('Id is invalid.');
-    socket.join(result.channelId);
-    return result;
+    const { channelId } = await User.findById(id);
+    if (!channelId) return new Error('Id is invalid.');
+    socket.join(channelId);
+    const count = await countUserInChannel(channelId);
+    socket.to(channelId).emit('count', count);
+    //socket.broadcast.to(channelId).emit('count', count);
+    return channelId;
   } catch (error) {
     return error;
   }

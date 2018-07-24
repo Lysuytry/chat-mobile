@@ -130,6 +130,10 @@
         $('#messages').append($('<li>').text(createdAt + '\t\t' + username + '\t\t' + content));
       });
 
+      socket.on('count', function (msg){
+        $('#info').html(msg);
+      });
+
       // online.on('updateOnline', users => {
       //   $('#online').children().remove();
       //   users.forEach(item => {

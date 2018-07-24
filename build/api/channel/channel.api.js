@@ -9,6 +9,8 @@ var _channel = require('../../models/channel');
 
 var _channel2 = _interopRequireDefault(_channel);
 
+var _user = require('../../models/user');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const createChannel = exports.createChannel = async (req, res) => {
@@ -28,7 +30,14 @@ const getChannelList = exports.getChannelList = async (req, res) => {
 
     const condition = { status };
 
-    const [channels, total] = await Promise.all([_channel2.default.find(condition).skip(skip).limit(limit), _channel2.default.count(condition)]);
+    const [channels, total, all] = await Promise.all([_channel2.default.find(condition).skip(skip).limit(limit), _channel2.default.count(condition), (0, _user.countUserAllChannel)()]);
+    channels.forEach(item => {
+      all.forEach(item1 => {
+        if (item.id == item1._id) {
+          item.count = item1.count;
+        }
+      });
+    });
     res.success(channels, { limit, skip, total });
   } catch (error) {
     res.fail(error.message);
