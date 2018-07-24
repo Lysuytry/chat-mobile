@@ -30,6 +30,22 @@ const chatHandler = exports.chatHandler = socket => {
   socket.on('disconnect', () => {
     users.forEach(item => {
       if (item.id === socket.id) {
+        //console.log(item.id);
+        (0, _user.leftChannel)(item.userId, socket);
+      }
+    });
+    users = users.filter(item => item.id !== socket.id);
+  });
+
+  socket.on('error', error => {
+    console.log('error', error);
+  });
+
+  socket.on('disconnecting', reason => {
+    console.log(reason);
+    users.forEach(item => {
+      if (item.id === socket.id) {
+        //console.log(item.id);
         (0, _user.leftChannel)(item.userId, socket);
       }
     });
