@@ -2,8 +2,8 @@ import Channel from '../../models/channel';
 
 export const createChannel = async (req, res) => {
   try {
-    const { name } = req.body;
-    const channel = new Channel({ name });
+    const { name, limit } = req.body;
+    const channel = new Channel({ name, limit });
     const result = await channel.save();
     res.success(result);
   } catch (error) {

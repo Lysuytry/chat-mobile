@@ -9,7 +9,7 @@ import channelRoute from './api/channel/channel.route';
 import messageRoute from './api/message/message.route';
 import path from 'path';
 
-const { DBNAME, DBUSER, DBPASS } = process.env;
+const { DBNAME, DBUSER, DBPASS, ENDPOINT } = process.env;
 
 mongoose.connect(
   `mongodb://${DBUSER}:${DBPASS}@ds243441.mlab.com:43441/${DBNAME}`,
@@ -55,11 +55,8 @@ app.use('/test', (req, res) => {
   res.sendFile(file);
 });
 
-app.use('/api/v1/users', userRoute);
-// app.use((req, res) => {
-//   res.success('hello');
-// });
-app.use(`/api/v1/channels`, channelRoute);
-app.use(`/api/v1/messages`, messageRoute);
+app.use(`${ENDPOINT}/users`, userRoute);
+app.use(`${ENDPOINT}/channels`, channelRoute);
+app.use(`${ENDPOINT}/messages`, messageRoute);
 
 export default app;
