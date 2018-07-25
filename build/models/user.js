@@ -13,6 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const userSchema = (0, _mongoose.Schema)({
   username: { type: String, required: true, unique: true },
+  socketId: { type: String },
   channelId: { type: _mongoose.Schema.Types.ObjectId, ref: 'Channel' }
 }, { timestamps: true });
 
@@ -22,7 +23,7 @@ const countUserAllChannel = exports.countUserAllChannel = async () => {
   try {
     const result = await User.aggregate([{
       $group: {
-        _id: "$channelId",
+        _id: '$channelId',
         count: { $sum: 1 }
       }
     }]);
@@ -52,7 +53,7 @@ const countUserInChannel = exports.countUserInChannel = async id => {
 
 const leftChannel = exports.leftChannel = async (id, socket) => {
   try {
-    const result = await User.findByIdAndRemove(id);
+    const result = await User.findOneAndRemove({ socketId: socket.id });
     if (!result) return new Error('Id is invalid.');
     socket.leave(result.channelId);
     const count = await countUserInChannel(result.channelId);
@@ -65,7 +66,7 @@ const leftChannel = exports.leftChannel = async (id, socket) => {
 
 const joinChannel = exports.joinChannel = async (id, socket) => {
   try {
-    const { channelId } = await User.findById(id);
+    const { channelId } = await User.findOneAndUpdate({ _id: id }, { $set: { socketId: socket.id } });
     if (!channelId) return new Error('Id is invalid.');
     socket.join(channelId);
     const count = await countUserInChannel(channelId);

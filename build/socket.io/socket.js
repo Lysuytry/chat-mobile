@@ -28,23 +28,13 @@ const chatHandler = exports.chatHandler = socket => {
   });
 
   socket.on('disconnect', () => {
-    users.forEach(item => {
-      if (item.id === socket.id) {
-        //console.log(item.id);
-        (0, _user.leftChannel)(item.userId, socket);
-      }
-    });
+    (0, _user.leftChannel)('', socket);
     users = users.filter(item => item.id !== socket.id);
   });
 
   socket.on('error', msg => {
     console.log(msg);
-    users.forEach(item => {
-      if (item.id === socket.id) {
-        //console.log(item.id);
-        (0, _user.leftChannel)(item.userId, socket);
-      }
-    });
+    (0, _user.leftChannel)('', socket);
     users = users.filter(item => item.id !== socket.id);
   });
 };
