@@ -92,7 +92,7 @@
       });
 
       $('#reload').click(function () {
-        const urlMessage = `http://localhost:3000/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
+        const urlMessage = `https://fierce-wildwood-40527.herokuapp.com/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
         getListMessage(urlMessage);
         skip = +skip + 5;
       });
