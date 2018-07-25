@@ -20,8 +20,11 @@ app.use((err, req, res, next) => {
 });
 
 io.of('/chatroom').on('connection', chatHandler);
-io.of('/online').on('connection', onlineHandler);
+
+//io.of('/online').on('connection', onlineHandler);
 
 server.listen(PORT, () => {
   console.log(`We are open port ${PORT} for our express app`);
 });
+
+export {io};

@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import User from './user';
-
+import {io} from '../index';
 const messageSchema = Schema(
   {
     type: { type: String, default: 'message' },
@@ -20,7 +20,7 @@ export const createMessage = async (data, socket) => {
     const { username, channelId } = user;
     //console.log(channelId);
     const message = await Message.create({ username, content, channel: channelId, type });
-    socket.broadcast.to(channelId).emit('addMessage', { username, content, type, createdAt: message.createdAt });
+    io.of('/chatroom').to(channelId).emit('addMessage', { username, content, type, createdAt: message.createdAt });
     return message;
   } catch (error) {
     return error;

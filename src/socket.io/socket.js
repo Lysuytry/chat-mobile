@@ -1,6 +1,5 @@
 import { leftChannel, joinChannel } from '../models/user';
 import { createMessage } from '../models/message';
-
 let users = [];
 
 export const chatHandler = socket => {

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import {io} from '../index';
 
 const userSchema = Schema(
   {
@@ -64,7 +65,7 @@ export const joinChannel = async (id, socket) => {
     if (!channelId) return new Error('Id is invalid.');
     socket.join(channelId);
     const count = await countUserInChannel(channelId);
-    socket.to(channelId).emit('count', count);
+    io.of('/chatroom').to(channelId).emit('count', count);
     //socket.broadcast.to(channelId).emit('count', count);
     return channelId;
   } catch (error) {
