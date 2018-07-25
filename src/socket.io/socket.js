@@ -15,6 +15,7 @@ export const chatHandler = socket => {
   });
 
   socket.on('newMessage', data => {
+    console.log(data);
     createMessage(data, socket);
   });
 
