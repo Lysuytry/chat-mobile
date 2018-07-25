@@ -67,13 +67,13 @@
     $(function () {
       var old;
       var socket = io('/chatroom');
-      var skip = 0 , limit = 5;
+      var skip = 0, limit = 5;
       //var online = io('http://localhost:3000/online');
       //first query
       //const token = getParameterByName('token');
       const url = 'https://fierce-wildwood-40527.herokuapp.com/api/v1/channels';
       //const urlMessage = `http://localhost:3000/api/v1/messages?limit=5`;
-       const url1 = 'https://fierce-wildwood-40527.herokuapp.com/api/v1/users';
+      const url1 = 'https://fierce-wildwood-40527.herokuapp.com/api/v1/users';
       // const url2 = 'http://localhost:3000/api/v1/users/myself';
       //const url
       //getUser(url2, token);
@@ -97,7 +97,7 @@
         skip = +skip + 5;
       });
 
-      $('#leave').click(function() {
+      $('#leave').click(function () {
         socket.emit('left', $('#from').val());
         $('#from').val('');
       });
@@ -108,14 +108,14 @@
 
       $('form').submit(function () {
         //{ userId, content, type }
-        const data = { userId: $('#from').val(), content: $('#m').val() }
+        const data = { "userId": $('#from').val(), "content": $('#m').val() }
         socket.emit('newMessage', data);
         $('#messages').append($('<li style="text-align: right;">').text('\t\t' + $('#m').val()));
         $('#m').val('');
         return false;
       });
 
-      $('#to').hover(function() {
+      $('#to').hover(function () {
         const urlMessage = `http://localhost:3000/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
         getListMessage(urlMessage);
         skip = +skip + 5;
@@ -130,7 +130,7 @@
         $('#messages').append($('<li>').text(createdAt + '\t\t' + username + '\t\t' + content));
       });
 
-      socket.on('count', function (msg){
+      socket.on('count', function (msg) {
         $('#info').html(msg);
       });
 
