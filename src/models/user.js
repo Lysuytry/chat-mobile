@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 const userSchema = Schema(
   {
-    username: { type: String, required: true, unique: true },
+    username: { type: String, required: true },
     socketId: { type: String },
     channelId: { type: Schema.Types.ObjectId, ref: 'Channel' }
   },

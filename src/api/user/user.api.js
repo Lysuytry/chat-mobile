@@ -12,11 +12,13 @@ export const getUserList = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
+    const { channelId, username } = req.body;
+    const check = await User.findOne({ channelId, username });
+    if (check) return res.fail('Username is already taken!', 500);
     const user = await User.create(req.body);
-    res.success(user);
+    return res.success(user);
   } catch (error) {
-    const message = error.code === 11000 ? 'Username is taken.' : 'Internal server error.';
-    res.fail(message);
+    return res.fail(error.stack);
   }
 };
 
