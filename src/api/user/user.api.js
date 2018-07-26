@@ -28,6 +28,18 @@ export const createUser = async (req, res) => {
   }
 };
 
+export const checkUser = async (req, res) => {
+  try {
+    const { username, channelId } = req.body;
+    const check = await User.findOne({ username, channelId, socketId: { $ne: null } });
+    if (check) return res.fail('Username is already taken!', 500);
+    return res.success('Username is available.');
+  } catch (error) {
+    console.log(error.stack);
+    return res.fail('create user error.');
+  }
+};
+
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
