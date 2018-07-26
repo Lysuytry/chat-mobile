@@ -167,7 +167,7 @@
     <button style="width:auto;" id='btnSignOut'>SignOutTest</button>
     <div id="id01" class="modal">
 
-        <form class="modal-content animate">
+        <div class="modal-content animate">
 
             <div class="container">
                 <label for="email">
@@ -190,13 +190,14 @@
             <div class="container" style="background-color:#f1f1f1">
                 <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
                 <span class="psw">Forgot
-                    <a href="#">password?</a>
+                    <a href="#" id="resetPwd">password?</a>
                 </span>
             </div>
-        </form>
+        </div>
     </div>
 
     <script>
+
         // Get the modal
         var modal = document.getElementById('id01');
 
@@ -228,8 +229,9 @@
                     //User is singed in.
                     //window.location.href = "/test";
                     // document.getElementById('btnOpenForm').textContent = 'SignOut';
-                    // document.getElementById("btnOpenForm").style.display = "none";
-                    // document.getElementById("btnOpenForm").disabled = true;
+                    document.getElementById("btnOpenForm").style.display = "none";
+                    document.getElementById("btnOpenForm").disabled = true;
+                    //document.getElementById('id01').innerHTML = "New text!";
                     console.log('Logged In');
                 } else {
                     //User isn't singed in.
@@ -237,11 +239,13 @@
                     //document.getElementById('btnSignOut').style.visibility = 'hidden';
                     document.getElementById("btnSignOut").style.display = "none";
                     document.getElementById("btnSignOut").disabled = true;
+                    console.log('Logged Out');
                 }
             });
             document.getElementById('loginSubmit').addEventListener('click', handleSignIn, false);
             document.getElementById('singUpBtn').addEventListener('click', handleSignUp, false);
             document.getElementById('btnSignOut').addEventListener('click', handleSignOut, false);
+            document.getElementById('resetPwd').addEventListener('click', handleResetPwd, false);
         }
 
         /**
@@ -283,7 +287,6 @@
                 firebase.auth().signOut();
                 // [END signout]
             } else {
-                console.log('SignIn processing');
                 var email = document.getElementById('email').value;
                 var password = document.getElementById('password').value;
                 // Sign in with email and pass.
@@ -305,6 +308,24 @@
 
         function handleSignOut() {
             firebase.auth().signOut();
+            document.getElementById("btnOpenForm").style.display = "block";
+            document.getElementById("btnOpenForm").disabled = false;
+        }
+
+        function handleResetPwd() {
+            var email = document.getElementById('email').value;
+            firebase.auth().sendPasswordResetEmail(email).then(function () {
+                alert('Password Reset Email Sent!');
+            }).catch(function (error) {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                if (errorCode == 'auth/invalid-email') {
+                    alert(errorMessage);
+                } else if (errorCode == 'auth/user-not-found') {
+                    alert(errorMessage);
+                }
+                console.log(error);
+            });
         }
     </script>
 
