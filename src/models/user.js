@@ -70,8 +70,11 @@ export const leftChannel = async (id, socket) => {
 
 export const joinChannel = async (id, socket) => {
   try {
-    const { channelId } = await User.findOneAndUpdate({ _id: id, socketId: null }, { $set: { socketId: socket.id } });
-    if (!channelId) return new Error('Id is invalid.');
+    const { channelId, socketId } = await User.findOneAndUpdate(
+      { _id: id, socketId: null },
+      { $set: { socketId: socket.id } }
+    );
+    if (socket.id !== socketId) return new Error('Id is invalid.');
     socket.join(channelId);
     const count = await countUserInChannel(channelId);
     io.of('/chatroom')
