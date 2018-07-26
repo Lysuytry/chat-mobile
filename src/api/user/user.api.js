@@ -13,10 +13,10 @@ export const getUserList = async (req, res) => {
 export const createUser = async (req, res) => {
   try {
     const { username, channelId } = req.body;
-    const check = await User.findOne({ username, channelId });
+    const check = await User.findOne({ username, channelId, socketId: {$ne: null} });
     if (check) return res.fail('Username is already taken!', 500);
     const user = await User.findOneAndUpdate(
-      { username, channelId: null },
+      { username, channelId, socketId: null },
       { $set: req.body },
       { upsert: true, new: true }
     );
