@@ -21,7 +21,7 @@ _joi2.default.objectId = (0, _joiObjectid2.default)(_joi2.default);
 
 
 const userCreatingSchema = _joi2.default.object().keys({
-  username: _joi2.default.string().required(),
+  username: _joi2.default.string().alphanum().required(),
   channelId: _joi2.default.objectId()
 });
 
