@@ -5,8 +5,7 @@ const userSchema = Schema(
   {
     username: { type: String, required: true },
     socketId: { type: String },
-    channelId: { type: Schema.Types.ObjectId, ref: 'Channel' },
-    status: { type: String, default: 'logging' }
+    channelId: { type: Schema.Types.ObjectId, ref: 'Channel' }
   },
   { timestamps: true }
 );
@@ -55,10 +54,9 @@ export const countUserInChannel = async id => {
 
 export const leftChannel = async (id, socket) => {
   try {
-    const status = 'logout';
     const result = await User.findOneAndUpdate(
       { socketId: socket.id },
-      { $set: { socketId: undefined, channelId: undefined, status } }
+      { $set: { socketId: undefined, channelId: undefined } }
     );
     if (!result) return new Error('Id is invalid.');
     socket.leave(result.channelId);
@@ -72,7 +70,7 @@ export const leftChannel = async (id, socket) => {
 
 export const joinChannel = async (id, socket) => {
   try {
-    const { channelId } = await User.findOneAndUpdate({ _id: id }, { $set: { socketId: socket.id } });
+    const { channelId } = await User.findOneAndUpdate({ _id: id, socketId: null }, { $set: { socketId: socket.id } });
     if (!channelId) return new Error('Id is invalid.');
     socket.join(channelId);
     const count = await countUserInChannel(channelId);
