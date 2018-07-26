@@ -12,13 +12,19 @@ export const getUserList = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
-    const { channelId, username } = req.body;
-    const check = await User.findOne({ channelId, username });
+    const { username, channelId } = req.body;
+    const check = await User.findOne({ username, channelId });
     if (check) return res.fail('Username is already taken!', 500);
-    const user = await User.create(req.body);
+    const user = await User.findOneAndUpdate(
+      { username, channelId: null },
+      { $set: req.body },
+      { upsert: true, new: true }
+    );
+    //const user = await User.create(req.body);
     return res.success(user);
   } catch (error) {
-    return res.fail(error.stack);
+    console.log(error.stack);
+    return res.fail('create user error.');
   }
 };
 

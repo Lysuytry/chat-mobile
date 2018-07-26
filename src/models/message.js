@@ -3,7 +3,6 @@ import User from './user';
 import {io} from '../index';
 const messageSchema = Schema(
   {
-    type: { type: String, default: 'message' },
     username: { type: String, required: true },
     content: { type: String },
     channel: { type: Schema.Types.ObjectId, ref: `Channel`, required: true }
@@ -15,12 +14,12 @@ const Message = mongoose.model('Message', messageSchema);
 
 export const createMessage = async (data, socket) => {
   try {
-    const { userId, content, type } = data;
+    const { userId, content } = data;
     const user = await User.findById({ _id: userId });
     const { username, channelId } = user;
     //console.log(channelId);
-    const message = await Message.create({ username, content, channel: channelId, type });
-    io.of('/chatroom').to(channelId).emit('addMessage', { username, content, type, createdAt: message.createdAt });
+    const message = await Message.create({ username, content, channel: channelId });
+    io.of('/chatroom').to(channelId).emit('addMessage', { username, content, createdAt: message.createdAt });
     return message;
   } catch (error) {
     return error;

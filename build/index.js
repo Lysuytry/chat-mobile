@@ -1,5 +1,10 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.io = undefined;
+
 var _app = require('./app');
 
 var _app2 = _interopRequireDefault(_app);
@@ -27,9 +32,12 @@ _app2.default.use((err, req, res, next) => {
 });
 
 io.of('/chatroom').on('connection', _socket.chatHandler);
-io.of('/online').on('connection', _socket.onlineHandler);
+
+//io.of('/online').on('connection', onlineHandler);
 
 server.listen(PORT, () => {
   console.log(`We are open port ${PORT} for our express app`);
 });
+
+exports.io = io;
 //# sourceMappingURL=index.js.map

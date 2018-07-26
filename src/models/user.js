@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import {io} from '../index';
+import { io } from '../index';
 
 const userSchema = Schema(
   {
@@ -16,6 +16,12 @@ export const countUserAllChannel = async () => {
   try {
     const result = await User.aggregate([
       {
+        $project: { channelId: 1, socketId: 1 }
+      },
+      {
+        $match: { socketId: { $ne: null } }
+      },
+      {
         $group: {
           _id: '$channelId',
           count: { $sum: 1 }
@@ -30,7 +36,7 @@ export const countUserAllChannel = async () => {
 
 export const deleteUserById = async id => {
   try {
-    const result = await User.deleteOne({ _id: id });
+    const result = await User.findByIdAndRemove({ _id: id });
     return result;
   } catch (error) {
     return error;
@@ -39,7 +45,7 @@ export const deleteUserById = async id => {
 
 export const countUserInChannel = async id => {
   try {
-    const count = await User.count({ channelId: id });
+    const count = await User.count({ channelId: id, socketId: { $ne: null } });
     return count;
   } catch (error) {
     return error;
@@ -48,7 +54,10 @@ export const countUserInChannel = async id => {
 
 export const leftChannel = async (id, socket) => {
   try {
-    const result = await User.findOneAndRemove({ socketId: socket.id });
+    const result = await User.findOneAndUpdate(
+      { socketId: socket.id },
+      { $set: { socketId: undefined, channelId: undefined } }
+    );
     if (!result) return new Error('Id is invalid.');
     socket.leave(result.channelId);
     const count = await countUserInChannel(result.channelId);
@@ -65,7 +74,9 @@ export const joinChannel = async (id, socket) => {
     if (!channelId) return new Error('Id is invalid.');
     socket.join(channelId);
     const count = await countUserInChannel(channelId);
-    io.of('/chatroom').to(channelId).emit('count', count);
+    io.of('/chatroom')
+      .to(channelId)
+      .emit('count', count);
     //socket.broadcast.to(channelId).emit('count', count);
     return channelId;
   } catch (error) {
