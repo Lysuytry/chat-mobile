@@ -163,8 +163,8 @@
 
 <body>
 
-    <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
-
+    <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;" id="btnOpenForm">Login</button>
+    <button style="width:auto;" id='btnSignOut'>SignOutTest</button>
     <div id="id01" class="modal">
 
         <form class="modal-content animate">
@@ -180,8 +180,8 @@
                 </label>
                 <input type="password" id="password" placeholder="Enter Password" name="psw" required>
 
-                <button type="submit" id="loginSubmit">Sign In</button>
-                <button type="submit" id="singUpBtn">Sing Up</button>
+                <button type="submit" id="loginSubmit">SignIn</button>
+                <button type="submit" id="singUpBtn">SingUp</button>
                 <label>
                     <input type="checkbox" checked="checked" name="remember"> Remember me
                 </label>
@@ -226,15 +226,22 @@
             firebase.auth().onAuthStateChanged(function (user) {
                 if (user) {
                     //User is singed in.
-                    window.location.href = "/test";
-                }else{
-                     //User isn't singed in.
-                     window.location.href = "/firebase";
+                    //window.location.href = "/test";
+                    // document.getElementById('btnOpenForm').textContent = 'SignOut';
+                    // document.getElementById("btnOpenForm").style.display = "none";
+                    // document.getElementById("btnOpenForm").disabled = true;
+                    console.log('Logged In');
+                } else {
+                    //User isn't singed in.
+                    //window.location.href = "/firebase";
+                    //document.getElementById('btnSignOut').style.visibility = 'hidden';
+                    document.getElementById("btnSignOut").style.display = "none";
+                    document.getElementById("btnSignOut").disabled = true;
                 }
             });
             document.getElementById('loginSubmit').addEventListener('click', handleSignIn, false);
             document.getElementById('singUpBtn').addEventListener('click', handleSignUp, false);
-
+            document.getElementById('btnSignOut').addEventListener('click', handleSignOut, false);
         }
 
         /**
@@ -276,6 +283,7 @@
                 firebase.auth().signOut();
                 // [END signout]
             } else {
+                console.log('SignIn processing');
                 var email = document.getElementById('email').value;
                 var password = document.getElementById('password').value;
                 // Sign in with email and pass.
@@ -293,6 +301,10 @@
                     console.log(error);
                 });
             }
+        }
+
+        function handleSignOut() {
+            firebase.auth().signOut();
         }
     </script>
 
