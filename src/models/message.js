@@ -15,14 +15,14 @@ const Message = mongoose.model('Message', messageSchema);
 
 export const createMessage = async (data, socket) => {
   try {
-    const { userId, content } = data;
+    const { userId, content, types } = data;
     const user = await User.findById({ _id: userId });
     const { username, channelId } = user;
     //console.log(channelId);
-    const message = await Message.create({ username, content, channel: channelId });
+    const message = await Message.create({ username, content, channel: channelId, types });
     io.of('/chatroom')
       .to(channelId)
-      .emit('addMessage', { username, content, createdAt: message.createdAt });
+      .emit('addMessage', { username, content, createdAt: message.createdAt, types });
     return message;
   } catch (error) {
     return error;
