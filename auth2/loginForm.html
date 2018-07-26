@@ -226,10 +226,13 @@
             firebase.auth().onAuthStateChanged(function (user) {
                 if (user) {
                     //User is singed in.
-                    console.log(JSON.stringify(user, null, '  '));
+                    window.location.href = "/test";
+                }else{
+                     //User isn't singed in.
+                     window.location.href = "/firebase";
                 }
             });
-            //document.getElementById('loginSubmit').addEventListener('click', sendEmailVerification, false);
+            document.getElementById('loginSubmit').addEventListener('click', handleSignIn, false);
             document.getElementById('singUpBtn').addEventListener('click', handleSignUp, false);
 
         }
@@ -267,10 +270,29 @@
             });
         }
 
-        function sendEmailVerification(user) {
-            user.sendEmailVerification().then(function () {
-                alert('Email Verification Sent!');
-            });
+        function handleSignIn() {
+            if (firebase.auth().currentUser) {
+                // [START signout]
+                firebase.auth().signOut();
+                // [END signout]
+            } else {
+                var email = document.getElementById('email').value;
+                var password = document.getElementById('password').value;
+                // Sign in with email and pass.
+                // [START authwithemail]
+                firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    // [START_EXCLUDE]
+                    if (errorCode === 'auth/wrong-password') {
+                        alert('Wrong password.');
+                    } else {
+                        alert(errorMessage);
+                    }
+                    console.log(error);
+                });
+            }
         }
     </script>
 
