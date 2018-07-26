@@ -22,7 +22,7 @@ export const createMessage = async (data, socket) => {
     const message = await Message.create({ username, content, channel: channelId, types });
     io.of('/chatroom')
       .to(channelId)
-      .emit('addMessage', { username, content, createdAt: message.createdAt, types });
+      .emit('addMessage', { username, content, createdAt: message.createdAt, types: message.types });
     return message;
   } catch (error) {
     return error;
