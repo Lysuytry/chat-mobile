@@ -226,19 +226,10 @@
             firebase.initializeApp(config);
             firebase.auth().onAuthStateChanged(function (user) {
                 if (user) {
-                    //User is singed in.
-                    //window.location.href = "/test";
-                    // document.getElementById('btnOpenForm').textContent = 'SignOut';
-                    document.getElementById("btnOpenForm").style.display = "none";
-                    document.getElementById("btnOpenForm").disabled = true;
-                    //document.getElementById('id01').innerHTML = "New text!";
+                    handleDisableBtn("btnOpenForm");
                     console.log('Logged In');
                 } else {
-                    //User isn't singed in.
-                    //window.location.href = "/firebase";
-                    //document.getElementById('btnSignOut').style.visibility = 'hidden';
-                    document.getElementById("btnSignOut").style.display = "none";
-                    document.getElementById("btnSignOut").disabled = true;
+                    handleDisableBtn("btnSignOut");
                     console.log('Logged Out');
                 }
             });
@@ -324,6 +315,19 @@
                 } else if (errorCode == 'auth/user-not-found') {
                     alert(errorMessage);
                 }
+                console.log(error);
+            });
+        }
+
+        function handleDisableBtn(name) {
+            document.getElementById(name).style.display = "none";
+            document.getElementById(name).disabled = true;
+        }
+        function getIdToken() {
+            firebase.auth.currentUser.getIdToken(true).then(function (idToken) {
+                window.location.href = "/verify-id/" + idToken;
+            }).catch(function (error) {
+                alert(error);
                 console.log(error);
             });
         }
