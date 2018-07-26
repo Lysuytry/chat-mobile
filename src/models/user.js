@@ -72,7 +72,8 @@ export const joinChannel = async (id, socket) => {
   try {
     const { channelId, socketId } = await User.findOneAndUpdate(
       { _id: id, socketId: null },
-      { $set: { socketId: socket.id } }
+      { $set: { socketId: socket.id } },
+      { new: true }
     );
     if (socket.id !== socketId) return new Error('Id is invalid.');
     socket.join(channelId);
