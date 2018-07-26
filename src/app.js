@@ -12,7 +12,7 @@ import path from 'path';
 const { DBNAME, DBUSER, DBPASS, ENDPOINT } = process.env;
 
 mongoose.connect(
-  `mongodb://${DBUSER}:${DBPASS}@ds243441.mlab.com:43441/${DBNAME}`,
+  `mongodb://${DBUSER}:${DBPASS}@ds163850.mlab.com:63850/${DBNAME}`,
   () => {
     console.log('connected mLab');
   }
@@ -51,7 +51,17 @@ app.use((req, res, next) => {
 });
 
 app.use('/test', (req, res) => {
-  const file = path.join(__dirname + '../../html/index.html');
+  const file = path.join(__dirname + '../../html/index.htm');
+  res.sendFile(file);
+});
+
+app.use('/firebaseWorked', (req, res) => {
+  const file = path.join(__dirname + '../../auth/email-password.html');
+  res.sendFile(file);
+});
+
+app.use('/firebase', (req, res) => {
+  const file = path.join(__dirname + '../../auth2/loginForm.html');
   res.sendFile(file);
 });
 

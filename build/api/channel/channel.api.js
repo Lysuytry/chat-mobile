@@ -15,8 +15,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const createChannel = exports.createChannel = async (req, res) => {
   try {
-    const { name } = req.body;
-    const channel = new _channel2.default({ name });
+    const { name, limit } = req.body;
+    const channel = new _channel2.default({ name, limit });
     const result = await channel.save();
     res.success(result);
   } catch (error) {

@@ -42,9 +42,9 @@ var _path2 = _interopRequireDefault(_path);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const { DBNAME, DBUSER, DBPASS } = process.env;
+const { DBNAME, DBUSER, DBPASS, ENDPOINT } = process.env;
 
-_mongoose2.default.connect(`mongodb://${DBUSER}:${DBPASS}@ds243441.mlab.com:43441/${DBNAME}`, () => {
+_mongoose2.default.connect(`mongodb://${DBUSER}:${DBPASS}@ds163850.mlab.com:63850/${DBNAME}`, () => {
   console.log('connected mLab');
 });
 
@@ -77,13 +77,23 @@ app.use((req, res, next) => {
 });
 
 app.use('/test', (req, res) => {
-  const file = _path2.default.join(__dirname + '../../html/index.html');
+  const file = _path2.default.join(__dirname + '../../html/index.htm');
   res.sendFile(file);
 });
 
-app.use('/api/v1/users', _user2.default);
-app.use(`/api/v1/channels`, _channel2.default);
-app.use(`/api/v1/messages`, _message2.default);
+app.use('/firebaseWorked', (req, res) => {
+  const file = _path2.default.join(__dirname + '../../auth/email-password.html');
+  res.sendFile(file);
+});
+
+app.use('/firebase', (req, res) => {
+  const file = _path2.default.join(__dirname + '../../auth2/loginForm.html');
+  res.sendFile(file);
+});
+
+app.use(`${ENDPOINT}/users`, _user2.default);
+app.use(`${ENDPOINT}/channels`, _channel2.default);
+app.use(`${ENDPOINT}/messages`, _message2.default);
 
 exports.default = app;
 //# sourceMappingURL=app.js.map

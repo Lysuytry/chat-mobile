@@ -65,15 +65,57 @@
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script>
     $(function () {
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyAXKBuNcLV-eKfj3mWac891UXluAmrAlhU",
+        authDomain: "chat-mobile-96d57.firebaseapp.com",
+        databaseURL: "https://chat-mobile-96d57.firebaseio.com",
+        projectId: "chat-mobile-96d57",
+        storageBucket: "chat-mobile-96d57.appspot.com",
+        messagingSenderId: "308676823800"
+      };
+      firebase.initializeApp(config);
+
+      var user = firebase.auth().currentUser;
+      console.log('Hellllllllllo User: ', user);
+
+      if (user) {
+        user.sendEmailVerification().then(function () {
+          // Email sent.
+        }).catch(function (error) {
+          // An error happened.
+        });
+
+        firebase.auth().onAuthStateChanged(function (user) {
+          (user.emailVerified) ? console.log('Email is verified')
+            : console.log('Email is not verified')
+        });
+      }
+
+      firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // [START_EXCLUDE]
+        if (errorCode == 'auth/weak-password') {
+          alert('The password is too weak.');
+        } else {
+          alert(errorMessage);
+        }
+        console.log(error);
+        // [END_EXCLUDE]
+      });
+
+      /////////////////////////////////////////////////
       var old;
       var socket = io('/chatroom');
-      var skip = 0 , limit = 5;
+      var skip = 0, limit = 5;
       //var online = io('http://localhost:3000/online');
       //first query
       //const token = getParameterByName('token');
       const url = 'http://localhost:3000/api/v1/channels';
       //const urlMessage = `http://localhost:3000/api/v1/messages?limit=5`;
-       const url1 = 'http://localhost:3000/api/v1/users';
+      const url1 = 'http://localhost:3000/api/v1/users';
       // const url2 = 'http://localhost:3000/api/v1/users/myself';
       //const url
       //getUser(url2, token);
@@ -97,7 +139,7 @@
         skip = +skip + 5;
       });
 
-      $('#leave').click(function() {
+      $('#leave').click(function () {
         socket.emit('left', $('#from').val());
         $('#from').val('');
       });
@@ -115,7 +157,7 @@
         return false;
       });
 
-      $('#to').hover(function() {
+      $('#to').hover(function () {
         const urlMessage = `http://localhost:3000/api/v1/channels/${$('#to').val()}/messages?limit=${limit}&skip=${skip}`;
         getListMessage(urlMessage);
         skip = +skip + 5;
@@ -130,7 +172,7 @@
         $('#messages').append($('<li>').text(createdAt + '\t\t' + username + '\t\t' + content));
       });
 
-      socket.on('count', function (msg){
+      socket.on('count', function (msg) {
         $('#info').html(msg);
       });
 
