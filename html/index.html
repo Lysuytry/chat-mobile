@@ -65,48 +65,6 @@
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script>
     $(function () {
-      // Initialize Firebase
-      var config = {
-        apiKey: "AIzaSyAXKBuNcLV-eKfj3mWac891UXluAmrAlhU",
-        authDomain: "chat-mobile-96d57.firebaseapp.com",
-        databaseURL: "https://chat-mobile-96d57.firebaseio.com",
-        projectId: "chat-mobile-96d57",
-        storageBucket: "chat-mobile-96d57.appspot.com",
-        messagingSenderId: "308676823800"
-      };
-      firebase.initializeApp(config);
-
-      var user = firebase.auth().currentUser;
-      console.log('Hellllllllllo User: ', user);
-
-      if (user) {
-        user.sendEmailVerification().then(function () {
-          // Email sent.
-        }).catch(function (error) {
-          // An error happened.
-        });
-
-        firebase.auth().onAuthStateChanged(function (user) {
-          (user.emailVerified) ? console.log('Email is verified')
-            : console.log('Email is not verified')
-        });
-      }
-
-      firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // [START_EXCLUDE]
-        if (errorCode == 'auth/weak-password') {
-          alert('The password is too weak.');
-        } else {
-          alert(errorMessage);
-        }
-        console.log(error);
-        // [END_EXCLUDE]
-      });
-
-      /////////////////////////////////////////////////
       var old;
       var socket = io('/chatroom');
       var skip = 0, limit = 5;

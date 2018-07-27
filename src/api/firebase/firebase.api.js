@@ -1,12 +1,5 @@
 const admin = require('firebase-admin');
-//const projectName = process.env.PROJECT_NAME;
 const { PROJECT_NAME, PROJECT_ID, CLIENT_EMAIL, PRIVATE_KEY } = process.env;
-//const serviceAccount  = require("./service_account.json");
-
-// const firebaseApp = admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   databaseURL: `https://${projectName}.firebaseio.com/`
-// });
 const privateKey = PRIVATE_KEY.replace(/\\n/g, '\n');
 const firebaseApp = admin.initializeApp({
   credential: admin.credential.cert({
@@ -30,7 +23,7 @@ export const verifyToken = async (req, res) => {
       res.status(400).send('Token not provided');
       return;
     }
-  
+
     admin
       .auth()
       .verifyIdToken(idToken)

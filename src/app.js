@@ -46,24 +46,20 @@ app.use((req, res, next) => {
     console.log(message);
     return res.status(code).json({ message });
   };
-  //for firebase
 
   //parse to next
   next();
 });
+
+app.use((req, res, next) => {});
 
 app.use('/test', (req, res) => {
   const file = path.join(__dirname + '../../html/index.html');
   res.sendFile(file);
 });
 
-app.use('/firebaseWorked', (req, res) => {
-  const file = path.join(__dirname + '../../auth/email-password.html');
-  res.sendFile(file);
-});
-
 app.use('/firebase', (req, res) => {
-  const file = path.join(__dirname + '../../auth2/loginForm.html');
+  const file = path.join(__dirname + '../../html/loginForm.html');
   res.sendFile(file);
 });
 
