@@ -16,7 +16,7 @@ const Message = mongoose.model('Message', messageSchema);
 export const createMessage = async (data, socket) => {
   try {
     const { userId, content, types } = data;
-    const user = await User.findById({ _id: userId });
+    const user = await User.findById({ _id: userId, socketId: socket.id });
     const { username, channelId } = user;
     //console.log(channelId);
     const message = await Message.create({ username, content, channel: channelId, types });
