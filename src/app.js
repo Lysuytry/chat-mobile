@@ -8,7 +8,7 @@ import userRoute from './api/user/user.route';
 import channelRoute from './api/channel/channel.route';
 import messageRoute from './api/message/message.route';
 import path from 'path';
-
+import firebaseRoute from './api/firebase/firebase.route';
 const { DBNAME, DBUSER, DBPASS, ENDPOINT } = process.env;
 
 mongoose.connect(
@@ -20,7 +20,7 @@ mongoose.connect(
 
 const app = express();
 
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(body.json());
 app.use(body.urlencoded({ extended: false }));
 
@@ -47,7 +47,7 @@ app.use((req, res, next) => {
     return res.status(code).json({ message });
   };
   //for firebase
-  
+
   //parse to next
   next();
 });
@@ -70,6 +70,6 @@ app.use('/firebase', (req, res) => {
 app.use(`${ENDPOINT}/users`, userRoute);
 app.use(`${ENDPOINT}/channels`, channelRoute);
 app.use(`${ENDPOINT}/messages`, messageRoute);
-
+app.use(`${ENDPOINT}/firebases`, firebaseRoute);
 
 export default app;

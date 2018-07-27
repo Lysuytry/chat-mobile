@@ -2,7 +2,6 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Firebase App is always required and must be first -->
     <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-app.js"></script>
     <!-- Add additional services that you want to use -->
@@ -231,6 +230,7 @@
                         handleSignOut();
                         return;
                     }
+                    getIdToken(user);
                     handleDisableBtn("btnOpenForm");
                     console.log('Logged In');
                 } else {
@@ -329,9 +329,9 @@
             document.getElementById(name).disabled = true;
         }
 
-        function getIdToken() {
-            firebase.auth.currentUser.getIdToken(true).then(function (idToken) {
-                window.location.href = "/verify-id/" + idToken;
+        function getIdToken(user) {
+            user.getIdToken(true).then(function (idToken) {
+                window.location.href = "/api/v1/firebases/verifyToken/" + idToken;
             }).catch(function (error) {
                 alert(error);
                 console.log(error);

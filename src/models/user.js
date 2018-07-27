@@ -3,10 +3,22 @@ import mongoose, { Schema } from 'mongoose';
 const userSchema = Schema(
   {
     username: { type: String, required: true, unique: true },
-    channelId: { type: Schema.Types.ObjectId, ref: 'Channel' }
+    channelId: { type: Schema.Types.ObjectId, ref: 'Channel' },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      unique: true,
+      required: 'Email address is required'
+    }
   },
   { timestamps: true }
 );
+
+userSchema.path('email').validate(function(email) {
+  var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+  return emailRegex.test(email.text); // Assuming email has a text attribute
+}, 'The e-mail field cannot be empty.');
 
 const User = mongoose.model('User', userSchema);
 
@@ -15,7 +27,7 @@ export const countUserAllChannel = async () => {
     const result = await User.aggregate([
       {
         $group: {
-          _id: "$channelId",
+          _id: '$channelId',
           count: { $sum: 1 }
         }
       }

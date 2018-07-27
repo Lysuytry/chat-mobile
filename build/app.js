@@ -40,6 +40,10 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
+var _firebase = require('./api/firebase/firebase.route');
+
+var _firebase2 = _interopRequireDefault(_firebase);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const { DBNAME, DBUSER, DBPASS, ENDPOINT } = process.env;
@@ -50,7 +54,7 @@ _mongoose2.default.connect(`mongodb://${DBUSER}:${DBPASS}@ds163850.mlab.com:6385
 
 const app = (0, _express2.default)();
 
-app.use((0, _morgan2.default)('dev'));
+//app.use(logger('dev'));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({ extended: false }));
 
@@ -96,6 +100,7 @@ app.use('/firebase', (req, res) => {
 app.use(`${ENDPOINT}/users`, _user2.default);
 app.use(`${ENDPOINT}/channels`, _channel2.default);
 app.use(`${ENDPOINT}/messages`, _message2.default);
+app.use(`${ENDPOINT}/firebases`, _firebase2.default);
 
 exports.default = app;
 //# sourceMappingURL=app.js.map

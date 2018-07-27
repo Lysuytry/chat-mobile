@@ -13,8 +13,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const userSchema = (0, _mongoose.Schema)({
   username: { type: String, required: true, unique: true },
-  channelId: { type: _mongoose.Schema.Types.ObjectId, ref: 'Channel' }
+  channelId: { type: _mongoose.Schema.Types.ObjectId, ref: 'Channel' },
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    unique: true,
+    required: 'Email address is required'
+  }
 }, { timestamps: true });
+
+userSchema.path('email').validate(function (email) {
+  var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+  return emailRegex.test(email.text); // Assuming email has a text attribute
+}, 'The e-mail field cannot be empty.');
 
 const User = _mongoose2.default.model('User', userSchema);
 
@@ -22,7 +34,7 @@ const countUserAllChannel = exports.countUserAllChannel = async () => {
   try {
     const result = await User.aggregate([{
       $group: {
-        _id: "$channelId",
+        _id: '$channelId',
         count: { $sum: 1 }
       }
     }]);
