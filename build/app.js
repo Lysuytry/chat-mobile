@@ -81,8 +81,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {});
-
 app.use('/test', (req, res) => {
   const file = _path2.default.join(__dirname + '../../html/index.html');
   res.sendFile(file);

@@ -28,8 +28,18 @@ export const verifyToken = async (req, res) => {
       .auth()
       .verifyIdToken(idToken)
       .then(function(decodedToken) {
-        res.json(decodedToken);
-        console.log('Token arrived!');
+        // res.json(decodedToken);
+        // console.log('Token arrived!');
+        admin
+          .auth()
+          .getUser(decodedToken.uid)
+          .then(userRecord => {
+            const isEmailMatch = userRecord.email == decodedToken.email ? true : false;
+            console.log(isEmailMatch);
+          })
+          .catch(error => {
+            console.log(error);
+          });
       })
       .catch(function(error) {
         res.status(404).send('Token not found or not valid');
