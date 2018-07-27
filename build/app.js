@@ -72,6 +72,8 @@ app.use((req, res, next) => {
     console.log(message);
     return res.status(code).json({ message });
   };
+  //for firebase
+
   //parse to next
   next();
 });

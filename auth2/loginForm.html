@@ -226,6 +226,11 @@
             firebase.initializeApp(config);
             firebase.auth().onAuthStateChanged(function (user) {
                 if (user) {
+                    if (!user.emailVerified) {
+                        alert('Email is not verified');
+                        handleSignOut();
+                        return;
+                    }
                     handleDisableBtn("btnOpenForm");
                     console.log('Logged In');
                 } else {
@@ -323,6 +328,7 @@
             document.getElementById(name).style.display = "none";
             document.getElementById(name).disabled = true;
         }
+
         function getIdToken() {
             firebase.auth.currentUser.getIdToken(true).then(function (idToken) {
                 window.location.href = "/verify-id/" + idToken;
