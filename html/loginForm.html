@@ -255,6 +255,11 @@
         function handleSignUp() {
             var email = document.getElementById('email').value;
             var password = document.getElementById('password').value;
+            var username = document.getElementById('username').value;
+            if (username.trim().length < 1) {
+                alert('Please enter username.');
+                return;
+            }
             if (email.length < 4) {
                 alert('Please enter an email address.');
                 return;
@@ -265,6 +270,7 @@
             }
 
             firebase.auth().createUserWithEmailAndPassword(email, password).then(function (user) {
+                addUsername(firebase.auth().currentUser, username);
                 firebase.auth().currentUser.sendEmailVerification().then(function () {
                     alert('Email Verification Sent!');
                 });
@@ -340,6 +346,19 @@
             }).catch(function (error) {
                 alert(error);
                 console.log(error);
+            });
+        }
+
+        function addUsername(user, username) {
+            // Updates the user attributes:
+            user.updateProfile({
+                displayName: username
+            }).then(function () {
+                // Profile updated successfully!
+                var displayName = user.displayName;
+            }, function (error) {
+                console.log('Error UpdateProfile: ', error);
+                return;
             });
         }
     </script>
