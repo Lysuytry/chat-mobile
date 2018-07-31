@@ -15,7 +15,7 @@ if (!firebaseApp) {
   process.exit();
 }
 
-export const verifyToken = async (req, res) => {
+export const verifyToken = async (req, res, next) => {
   
   try {
     console.log(req.params);
@@ -25,10 +25,9 @@ export const verifyToken = async (req, res) => {
       return;
     }
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const userRecord = await admin.auth().getUser(decodedToken.uid);
-    const isEmailMatch = userRecord.email == decodedToken.email ? true : false;
-    console.log(isEmailMatch);
+    console.log('Username is: ', decodedToken.name);
     res.status(400).send(idToken);
+    next();
   } catch (error) {
     console.log(error);
     res.status(404).send('Token not found or not valid');

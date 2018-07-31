@@ -230,6 +230,7 @@
             firebase.initializeApp(config);
             firebase.auth().onAuthStateChanged(function (user) {
                 if (user) {
+                    console.log(user);
                     if (!user.emailVerified) {
                         alert('Email is not verified');
                         handleSignOut();
@@ -342,7 +343,8 @@
 
         function getIdToken(user) {
             user.getIdToken(true).then(function (idToken) {
-                window.location.href = "/api/v1/firebases/verifyToken/" + idToken;
+                //window.location.href = "/api/v1/firebases/verifyToken/" + idToken;
+                window.location.href = "/api/v1/verifyToken/" + idToken;
             }).catch(function (error) {
                 alert(error);
                 console.log(error);
