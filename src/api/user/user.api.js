@@ -15,13 +15,7 @@ export const createUser = async (req, res) => {
     const user = await User.create(req.body);
     res.success(user);
   } catch (error) {
-    let message; // = error.code === 11000 ? 'Username or Email is taken.' : error.message;
-    if (error.code === 11000) {
-      message =
-        Object.values(error.message).indexOf(`E11000 duplicate key error index: ${DBNAME}.users.$email_1 dup key: `) > -1 ? 'Email is taken.' : 'Username is taken.';
-    } else {
-      message = error.message;
-    }
+    const message = error.code === 11000 ? 'Username or Email is already taken.' : error.message;
     res.fail(message);
   }
 };
