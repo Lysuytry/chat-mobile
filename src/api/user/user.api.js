@@ -1,5 +1,5 @@
 import User, { deleteUserById } from '../../models/user';
-
+const { DBNAME } = process.env;
 export const getUserList = async (req, res) => {
   try {
     const { limit, skip } = req.query;
@@ -15,7 +15,13 @@ export const createUser = async (req, res) => {
     const user = await User.create(req.body);
     res.success(user);
   } catch (error) {
-    const message = error.code === 11000 ? 'Username is taken.' : error.message;
+    let message; // = error.code === 11000 ? 'Username or Email is taken.' : error.message;
+    if (error.code === 11000) {
+      message =
+        Object.values(error.message).indexOf(`E11000 duplicate key error index: ${DBNAME}.users.$email_1 dup key: `) > -1 ? 'Email is taken.' : 'Username is taken.';
+    } else {
+      message = error.message;
+    }
     res.fail(message);
   }
 };

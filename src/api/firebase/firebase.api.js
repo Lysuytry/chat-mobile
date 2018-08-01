@@ -43,9 +43,10 @@ export const verifyToken2 = async (req, res, next) => {
       return;
     }
     const decodedToken = await admin.auth().verifyIdToken(token);
-    //console.log('Username is: ', decodedToken.name);
-    const username = decodedToken.name;
-    req.body = {username};
+    console.log('Email is:', decodedToken.email);
+    const username = 'van';//decodedToken.name;
+    const email = decodedToken.email;
+    req.body = {username, email};
     next();
   } catch (error) {
     console.log(error);

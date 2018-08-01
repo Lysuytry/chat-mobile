@@ -6,16 +6,17 @@ import {validator} from '../../common/validator';
 
 const userCreatingSchema = Joi.object().keys({
   username: Joi.string().required(),
+  email: Joi.string().email(),
   channelId: Joi.objectId()
 });
 
 const userUpdatingSchema = Joi.object().keys({
   username: Joi.string(),
+  email: Joi.string().email(),
   channelId: Joi.objectId()
 });
 
 export const validateUserCreating = (req, res, next) => {
-  console.log(req.body);
   validator(req.body, userCreatingSchema, req, res, next);
 };
 

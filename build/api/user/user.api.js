@@ -11,6 +11,7 @@ var _user2 = _interopRequireDefault(_user);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+const { DBNAME } = process.env;
 const getUserList = exports.getUserList = async (req, res) => {
   try {
     const { limit, skip } = req.query;
@@ -26,7 +27,12 @@ const createUser = exports.createUser = async (req, res) => {
     const user = await _user2.default.create(req.body);
     res.success(user);
   } catch (error) {
-    const message = error.code === 11000 ? 'Username is taken.' : error.message;
+    let message; // = error.code === 11000 ? 'Username or Email is taken.' : error.message;
+    if (error.code === 11000) {
+      message = Object.values(error.message).indexOf(`E11000 duplicate key error index: ${DBNAME}.users.$email_1 dup key: `) > -1 ? 'Email is taken.' : 'Username is taken.';
+    } else {
+      message = error.message;
+    }
     res.fail(message);
   }
 };
