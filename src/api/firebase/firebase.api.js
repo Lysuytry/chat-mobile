@@ -11,27 +11,9 @@ const firebaseApp = admin.initializeApp({
 });
 
 if (!firebaseApp) {
-  console.log('Failed to initialise firebase app');
+  console.log('Failed to initialize firebase app');
   process.exit();
 }
-
-// export const verifyToken = async (req, res, next) => {
-//   try {
-//     console.log(req.params);
-//     const idToken = req.params.token;
-//     if (!idToken) {
-//       res.status(400).send('Token not provided');
-//       return;
-//     }
-//     const decodedToken = await admin.auth().verifyIdToken(idToken);
-//     console.log('Username is: ', decodedToken.name);
-//     res.status(400).send(idToken);
-//     next();
-//   } catch (error) {
-//     console.log(error);
-//     res.status(404).send('Token not found or not valid');
-//   }
-// };
 
 export const verifyToken = async (req, res, next) => {
   try {
