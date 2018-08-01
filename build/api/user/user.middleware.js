@@ -31,6 +31,7 @@ const userUpdatingSchema = _joi2.default.object().keys({
 });
 
 const validateUserCreating = exports.validateUserCreating = (req, res, next) => {
+  console.log(req.body);
   (0, _validator.validator)(req.body, userCreatingSchema, req, res, next);
 };
 

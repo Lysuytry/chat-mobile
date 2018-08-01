@@ -15,6 +15,7 @@ const userUpdatingSchema = Joi.object().keys({
 });
 
 export const validateUserCreating = (req, res, next) => {
+  console.log(req.body);
   validator(req.body, userCreatingSchema, req, res, next);
 };
 

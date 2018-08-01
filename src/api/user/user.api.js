@@ -15,7 +15,7 @@ export const createUser = async (req, res) => {
     const user = await User.create(req.body);
     res.success(user);
   } catch (error) {
-    const message = error.code === 11000 ? 'Username is taken.' : message.message;
+    const message = error.code === 11000 ? 'Username is taken.' : error.message;
     res.fail(message);
   }
 };
